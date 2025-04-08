@@ -1,0 +1,42 @@
+name: ClockHash Security Scan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  run-scan:
+    runs-on: ubuntu-latest
+
+    services:
+      app:
+        image: python:3.9
+        ports:
+          - 3000:3000
+        options: >-
+          --health-cmd "curl --fail http://localhost:3000 || exit 1"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        volumes:
+          - .:/app
+        env:
+          SECRET_PASSWORD: "super_secret_123"
+        command: bash -c "pip install flask && python /app/app/main.py"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run ClockHash Scan
+        uses: clockhash-kiran/clockhash-scan@main
+        with:
+          target: "."
+          url: "http://localhost:3000"
+
+      - name: Upload reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: clockhash-reports
+          path: reports/
