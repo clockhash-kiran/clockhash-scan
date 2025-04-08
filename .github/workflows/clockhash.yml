@@ -25,7 +25,7 @@ jobs:
           sleep 5                    # Give it a few seconds to start
 
       - name: Run ClockHash Scan
-        uses: your-username/clockhash-scan@main
+        uses: clockhash-kiran/clockhash-scan@main
         with:
           target: "."
           url: "http://localhost:3000"
